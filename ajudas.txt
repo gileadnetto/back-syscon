@@ -1,0 +1,2 @@
+knex migrate:make produto_imagem
+knex migrate:latest
