@@ -169,7 +169,8 @@ module.exports = app => {
         existeOuErro(req.params.id, "Identificador não informado");
 
         app.db('unidades')
-        .select('*')
+        .select('unidades.*', 'locatario.dsemail','locatario.nrtelefoneres')
+        .join('locatario', 'unidades.idlocatario', 'locatario.idlocatario')
         .where({idcondominio : req.params.id})
         .then( data => res.json(data))
         .catch( err => res.status(500).send(err))
@@ -179,6 +180,29 @@ module.exports = app => {
     const cobrancas = (req, res) => {
 
         app.db('cobranca')
+            .then( data => res.json(data))
+            .catch( err => res.status(500).send(err))
+    }
+
+    const cobrancasPorCondominio = (req, res) => {
+
+        existeOuErro(req.params.id, "Identificador do condominio não informado");
+
+        app.db('cobranca')
+            .then( data => res.json(data))
+            .where({idcondominio : req.params.id})
+            .catch( err => res.status(500).send(err))
+    }
+
+    const cobrancasPorUnidade = (req, res) => {
+
+        existeOuErro(req.params.id, "Identificador da unidade não informado");
+
+        app.db('cobranca')
+            .where({idunidade : req.params.id})
+            .orderBy('dtemissao', 'desc')
+            .leftJoin('agencias', 'agencias.cdchamada', 'cobranca.cdagencia')
+
             .then( data => res.json(data))
             .catch( err => res.status(500).send(err))
     }
@@ -229,6 +253,41 @@ module.exports = app => {
             .then( data => res.json(data))
             .catch( err => res.status(500).send(err))
     }
+
+    //Movimentacao
+    const emailsPorUnidade = (req, res) => {
+
+        existeOuErro(req.params.id, "Identificador da unidade não informado");
+
+        app.db('monitoramentoenvioemail')
+            .where({idunidade : req.params.id})
+            .orderBy('dtsaidafila', 'desc')
+            .then( data => res.json(data))
+            .catch( err => res.status(500).send(err))
+    }
+
+
     
-    return { salvar, listar, buscaId, remover, usuariosPaginados, condominios, contadores, contadorById, locatarios, cobrancas, cobrancas_reimpressao, bancos,conta_banco, integrante_corpo_diretivo, logs_evt, movctapg ,locatariosByCondominio}
+    return {    
+        salvar, 
+        listar, 
+        buscaId, 
+        remover,
+        usuariosPaginados,
+        condominios,
+        contadores,
+        contadorById,
+        locatarios,
+        cobrancas,
+        cobrancasPorCondominio,
+        cobrancasPorUnidade,
+        cobrancas_reimpressao,
+        bancos,
+        conta_banco,
+        integrante_corpo_diretivo,
+        logs_evt,
+        movctapg,
+        locatariosByCondominio,
+        emailsPorUnidade
+    }
 }

@@ -32,7 +32,13 @@ module.exports = app => {
 
     app.route('/cobrancas')
         .get(app.api.usuario.cobrancas)
+        
+    app.route('/cobrancas/condominio/:id')
+        .get(app.api.usuario.cobrancasPorCondominio)
 
+    app.route('/cobrancas/unidade/:id')
+        .get(app.api.usuario.cobrancasPorUnidade)
+        
     app.route('/cobrancas_reimpressao')
         .get(app.api.usuario.cobrancas_reimpressao)
 
@@ -50,6 +56,9 @@ module.exports = app => {
 
     app.route('/movimentacoes')
         .get(app.api.usuario.movctapg)
+
+    app.route('/emails/unidade/:id')
+        .get(app.api.usuario.emailsPorUnidade)
 
 
 
